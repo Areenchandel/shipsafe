@@ -1,5 +1,5 @@
 locals {
-  github_repo = "Areenchandel/shipsafe"
+  github_repo = "Areenchandel@179294400/shipsafe@1432957677"
   deploy_envs = ["dev", "staging", "prod"]
   state_arn   = "arn:aws:s3:::shipsafe-tfstate-190335339393"
 }
