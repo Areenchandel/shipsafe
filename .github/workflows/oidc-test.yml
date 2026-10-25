@@ -1,0 +1,40 @@
+name: oidc-test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  whoami:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - env: dev
+            account: "368838190652"
+          - env: staging
+            account: "243054644279"
+          - env: prod
+            account: "173149129548"
+    steps:
+      - name: Login to management (OIDC, no keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::190335339393:role/shipsafe-github-actions
+          aws-region: ap-south-1
+
+      - name: Who am I (hub)
+        run: aws sts get-caller-identity
+
+      - name: Hop into ${{ matrix.env }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/shipsafe-deploy
+          aws-region: ap-south-1
+          role-chaining: true
+
+      - name: Who am I (${{ matrix.env }})
+        run: aws sts get-caller-identity
